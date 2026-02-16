@@ -5,17 +5,28 @@
  */
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import dotenv from 'dotenv';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-// Middleware
-app.use(cors({ origin: ['http://localhost:5173', 'http://localhost:3000'] }));
+// Middleware — allow all origins in production (Cloud Run handles security)
+app.use(cors());
 app.use(express.json({ limit: '10kb' })); // Limit payload size
+
+// In production, serve the Vite-built static files
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.resolve(__dirname, '../../dist');
+  app.use(express.static(distPath));
+}
 
 // Initialize Gemini (server-side only — key never reaches the client)
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
@@ -142,7 +153,16 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-app.listen(PORT, () => {
-  console.log(`🍄 Mario API proxy running on http://localhost:${PORT}`);
+// In production, serve index.html for all non-API routes (SPA fallback)
+if (process.env.NODE_ENV === 'production') {
+  const distPath = path.resolve(__dirname, '../../dist');
+  app.get('/{*path}', (req, res) => {
+    res.sendFile(path.join(distPath, 'index.html'));
+  });
+}
+
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🍄 Mario API proxy running on http://0.0.0.0:${PORT}`);
+  console.log(`   Environment: ${process.env.NODE_ENV || 'development'}`);
   console.log(`   Gemini API key: ${process.env.GEMINI_API_KEY ? '✅ configured' : '❌ missing'}`);
 });
