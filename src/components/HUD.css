@@ -1,0 +1,75 @@
+/* HUD Styles — High contrast, responsive, glass morphism */
+.hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 12px 20px;
+  pointer-events: none;
+}
+
+.hud-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  max-width: 800px;
+  margin: 0 auto;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-radius: 12px;
+  padding: 10px 20px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.hud-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #aaa;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.hud-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  font-family: 'Courier New', monospace;
+  min-width: 40px;
+  text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.hud-icon {
+  font-size: 20px;
+}
+
+.hud-hearts {
+  display: flex;
+  gap: 2px;
+}
+
+.heart {
+  font-size: 18px;
+  transition: transform 0.2s ease;
+}
+
+.heart-full {
+  animation: heartPulse 1.5s ease infinite;
+}
+
+.heart-empty {
+  opacity: 0.4;
+}
+
+@keyframes heartPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.15); }
+}
